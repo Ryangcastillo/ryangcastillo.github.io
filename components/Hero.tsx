@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import profileImage from '../assets/ryan-profile.png';
 
 interface HeroProps {
     bio: string;
@@ -30,7 +31,7 @@ export const Hero: React.FC<HeroProps> = ({ bio }) => {
                 </div>
                 <div className="flex justify-center order-first md:order-last">
                     <img
-                        src={require('../assets/ryan-profile.png')}
+                        src={profileImage}
                         alt="Ryan Castillo"
                         className="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover shadow-lg border-2 border-slate-100"
                     />

@@ -1,11 +1,9 @@
 
 import React from 'react';
 import { BookOpenIcon } from './icons/BookOpenIcon';
-import { EyeIcon } from './icons/EyeIcon';
 import { StarIcon } from './icons/StarIcon';
 import { ForkIcon } from './icons/ForkIcon';
 import { BellIcon } from './icons/BellIcon';
-import { ChevronDownIcon } from './icons/ChevronDownIcon';
 
 export const Header: React.FC = () => {
   return (

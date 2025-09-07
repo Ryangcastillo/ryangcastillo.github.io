@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface Project {
   id: number;
   name: string;
