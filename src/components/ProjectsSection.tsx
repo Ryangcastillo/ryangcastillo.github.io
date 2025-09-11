@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Project } from '../types';
+import type { Project } from '@/types';
 import { ArrowUpRightIcon } from './icons/ArrowUpRightIcon';
 
 interface ProjectsSectionProps {
@@ -31,18 +31,20 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
   return (
-    <section id="projects" className="py-16 md:py-24">
-        <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Featured Projects</h2>
-            <p className="mt-2 text-lg text-slate-600">A selection of my work. See something you like?</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-8">
-            {projects.length > 0 ? (
-                 projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} />)
-            ) : (
-                <div className="col-span-full text-center py-8 text-slate-500">Loading projects...</div>
-            )}
-        </div>
-    </section>
+    <div className="content w-full">
+      <section id="projects" className="py-16 md:py-24">
+          <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Featured Projects</h2>
+              <p className="mt-2 text-lg text-slate-600">A selection of my work. See something you like?</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+              {projects.length > 0 ? (
+                   projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} />)
+              ) : (
+                  <div className="col-span-full text-center py-8 text-slate-500">Loading projects...</div>
+              )}
+          </div>
+      </section>
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
-import type { TabItem } from '../types';
+import type { TabItem } from '@/types';
 
 interface TabsProps {
   tabs: TabItem[];

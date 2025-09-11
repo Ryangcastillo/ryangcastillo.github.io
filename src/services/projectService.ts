@@ -1,5 +1,25 @@
-import type { Project } from '../types';
+import type { Project } from '@/types';
 import { api } from './api';
+
+const LS_KEY = 'portfolio.projects';
+
+function readLocal(): Project[] | null {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as Project[];
+  } catch {
+    return null;
+  }
+}
+
+function writeLocal(projects: Project[]) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(projects));
+  } catch {
+    // ignore
+  }
+}
 
 const mockProjects: Project[] = [
   {
@@ -36,10 +56,12 @@ export const getProjects = async (): Promise<Project[]> => {
     try {
       return await api.get<Project[]>('/projects');
     } catch (e) {
-      console.warn('Falling back to mock projects due to API error:', e);
+      console.warn('Falling back to local/mock projects due to API error:', e);
     }
   }
-  return new Promise(resolve => setTimeout(() => resolve(mockProjects), 300));
+  const local = readLocal();
+  if (local) return local;
+  return new Promise(resolve => setTimeout(() => resolve(mockProjects), 200));
 };
 
 // This function would handle creating a new project via an API call.
@@ -50,10 +72,43 @@ export const addProject = async (project: Omit<Project, 'id'>): Promise<Project>
     try {
       return await api.post<Project, Omit<Project, 'id'>>('/projects', project);
     } catch (e) {
-      console.warn('API addProject failed, using mock add:', e);
+      console.warn('API addProject failed, using local add:', e);
     }
   }
+  const current = (await getProjects()).slice();
   const newProject: Project = { ...project, id: Date.now() } as Project;
-  mockProjects.push(newProject);
-  return new Promise(resolve => setTimeout(() => resolve(newProject), 300));
+  const isMock = current === mockProjects; // best-effort
+  const updated = isMock ? [...mockProjects, newProject] : [...current, newProject];
+  writeLocal(updated);
+  return newProject;
+}
+
+export const updateProject = async (project: Project): Promise<Project> => {
+  const base = (import.meta as any).env?.VITE_API_BASE as string | undefined;
+  if (base) {
+    try {
+      return await api.put<Project, Project>(`/projects/${project.id}`, project);
+    } catch (e) {
+      console.warn('API updateProject failed, using local update:', e);
+    }
+  }
+  const list = (await getProjects()).slice();
+  const idx = list.findIndex(p => p.id === project.id);
+  if (idx >= 0) list[idx] = project; else list.push(project);
+  writeLocal(list);
+  return project;
+}
+
+export const deleteProject = async (id: number): Promise<void> => {
+  const base = (import.meta as any).env?.VITE_API_BASE as string | undefined;
+  if (base) {
+    try {
+      await api.delete<void>(`/projects/${id}`);
+      return;
+    } catch (e) {
+      console.warn('API deleteProject failed, using local delete:', e);
+    }
+  }
+  const list = (await getProjects()).filter(p => p.id !== id);
+  writeLocal(list);
 }

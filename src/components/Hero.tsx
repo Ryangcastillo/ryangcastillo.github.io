@@ -3,18 +3,26 @@ import { Link } from 'react-router-dom';
 
 interface HeroProps {
     bio: string;
+    title?: string;
+    subtitle?: string;
+    backgroundUrl?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ bio }) => {
+export const Hero: React.FC<HeroProps> = ({ bio, title, subtitle, backgroundUrl }) => {
     return (
-        <section id="hero" className="pt-10 md:pt-14 pb-6 md:pb-8 animate-fade-in">
+        <section
+          id="hero"
+          className="hero py-2 animate-fade-in"
+          style={backgroundUrl ? { backgroundImage: `url(${backgroundUrl})` } : undefined}
+        >
+            <div className="content w-full">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 items-center">
                 <div className="md:col-span-2">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
-                        Hi, I'm Ryan!
+                        {title || "Hi, I'm Ryan!"}
                     </h1>
                     <p className="mt-4 text-lg md:text-xl text-slate-700 font-semibold">
-                        Data Analyst - Data and AI Enthusiast
+                        {subtitle || 'Data Analyst - Data and AI Enthusiast'}
                     </p>
                     <div className="mt-6 text-slate-600 max-w-prose text-base md:text-lg">
                         <p className="leading-relaxed whitespace-pre-line">{bio}</p>
@@ -35,6 +43,7 @@ export const Hero: React.FC<HeroProps> = ({ bio }) => {
                         className="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover shadow-lg border-2 border-slate-100"
                     />
                 </div>
+            </div>
             </div>
         </section>
     );

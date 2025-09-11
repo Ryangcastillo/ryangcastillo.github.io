@@ -1,15 +1,21 @@
-import React, { useEffect } from 'react';
-import { MailIcon } from '../components/icons/MailIcon';
-import { GitHubIcon } from '../components/icons/GitHubIcon';
-import { LinkedInIcon } from '../components/icons/LinkedInIcon';
+import React, { useEffect, useState } from 'react';
+import { MailIcon } from '@/components/icons/MailIcon';
+import { GitHubIcon } from '@/components/icons/GitHubIcon';
+import { LinkedInIcon } from '@/components/icons/LinkedInIcon';
+import { getSiteSettings } from '@/services/siteSettingsService';
 
 const Contact: React.FC = () => {
+    const [email, setEmail] = useState<string>('ryangcastillo@outlook.com');
+
     useEffect(() => {
         window.scrollTo(0, 0);
+        getSiteSettings().then(s => {
+            if (s.contactEmail && s.contactEmail.trim()) setEmail(s.contactEmail.trim());
+        }).catch(() => {});
     }, []);
 
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 animate-fade-in">
+        <div className="content max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 animate-fade-in">
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
                 <header className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Get in Touch</h1>
@@ -20,11 +26,11 @@ const Contact: React.FC = () => {
 
                 <div className="text-center">
                     <a 
-                        href="mailto:ryangcastillo@outlook.com" 
+                        href={`mailto:${email}`} 
                         className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all transform hover:scale-105"
                     >
                         <MailIcon className="w-6 h-6 mr-3" />
-                        ryangcastillo@outlook.com
+                        {email}
                     </a>
                 </div>
 
@@ -45,4 +51,3 @@ const Contact: React.FC = () => {
 };
 
 export default Contact;
-

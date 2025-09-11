@@ -1,0 +1,58 @@
+/* Global responsive adjustments */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+}
+
+/* Make media flexible by default */
+img, video, canvas, svg { max-width: 100%; height: auto; }
+
+/* Dynamic typography */
+h1 { font-size: clamp(2rem, 5vw, 4rem); }
+
+/* Optional: adjust on very small devices */
+@media (max-width: 480px) {
+  h1 { font-size: clamp(1.5rem, 8vw, 3rem); }
+}
+
+/* Additional dynamic typography within content areas */
+.content h2 { font-size: clamp(1.5rem, 3.8vw, 2.25rem); }
+.content h3 { font-size: clamp(1.125rem, 2.8vw, 1.5rem); }
+.content p { font-size: clamp(1rem, 1.6vw, 1.125rem); line-height: 1.7; }
+
+/* Hero section hooks: used alongside Tailwind classes */
+section#hero.hero {
+  width: 100vw;
+  min-height: 42vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Content wrapper to constrain width and add padding */
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Tablet tweaks */
+@media (max-width: 1024px) {
+  .content { padding: 25px; }
+}
+
+/* Smaller screens */
+@media (max-width: 768px) {
+  section#hero.hero { min-height: 60vh; }
+  .content { padding: 15px; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  section#hero.hero { min-height: 50vh; }
+  .content { padding: 10px; }
+}

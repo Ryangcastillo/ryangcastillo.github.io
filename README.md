@@ -13,6 +13,8 @@ Modern, responsive portfolio built with React + Vite, showcasing projects, skill
 - Accessible tab system with keyboard navigation and persisted selection.
 - Responsive UI with Tailwind CSS via CDN; no Tailwind build step required.
 - Mocked services for local development; easy swap to real backend.
+- Simple Admin UI (no backend required) to manage projects and site settings.
+- Extended Admin UI: Dashboard, Projects, Content (Hero/Skills/Links), Data Sources, Site Settings.
 
 ## Tech Stack
 
@@ -30,6 +32,38 @@ Modern, responsive portfolio built with React + Vite, showcasing projects, skill
 Notes:
 - Tailwind is loaded from CDN; `index.css` is optional. Vite will warn if it’s not present — safe to ignore.
 - No backend is required to run; services are mocked in `src/services/`.
+
+## Admin UI (CMS-lite)
+
+- Route: visit `/admin` in your browser.
+- Auth: optionally protect with a password by setting `VITE_ADMIN_PASSWORD` in `.env.local`.
+  - If unset, the admin is open locally (useful for quick edits during development).
+- Storage modes:
+  - If `VITE_API_BASE` is set, admin uses your backend endpoints.
+  - Otherwise, it stores changes in `localStorage` so you can iterate without a backend.
+    - Projects are saved under `portfolio.projects`.
+    - Site settings (bio, contact email) are saved under `portfolio.siteSettings`.
+
+What you can edit now:
+- Dashboard: quick stats and shortcuts.
+- Projects: add, edit, delete (feeds homepage + `/projects`).
+- Content: hero title/subtitle, skills (adds a “Custom Skills” tab), external links.
+- Data Sources: configure connection style (none/API/database/URL) and store related fields (no runtime connections are made yet).
+- Site settings: bio override and contact email (Contact page).
+
+Code layout:
+- `src/admin/AdminApp.tsx` – Admin router and pages
+- `src/admin/components/*` – Admin layout, auth gate, forms
+- `src/admin/pages/*` – Dashboard, Projects, Content, Data Sources, Site Settings
+- `src/admin/services/*` – Plug-and-play services abstraction and default adapters
+- `src/admin/examples/*` – Examples showing how to inject custom services and mount the Admin
+- `src/services/projectService.ts` – Now supports CRUD with localStorage/API fallback
+- `src/services/siteSettingsService.ts` – Site settings read/write with fallback
+- `src/services/cmsSettingsService.ts` – Content (hero/skills/links/data source) settings service
+- `src/services/geminiService.ts` – Reads admin bio override before calling OpenRouter
+
+Security note:
+- This is a client-side admin (for GitHub Pages/static hosting). For multi-user or secure editing, connect a real backend and set `VITE_API_BASE` + `VITE_ADMIN_PASSWORD`.
 
 ## Project Structure
 
@@ -80,7 +114,7 @@ And the Home page now fetches bio asynchronously:
 
 ```ts
 // src/pages/Home.tsx
-import { fetchBio } from '../services/geminiService'; // Now uses OpenRouter
+import { fetchBio } from '@/services/geminiService'; // Now uses OpenRouter
 useEffect(() => { fetchBio().then(setBio); /* ... */ }, []);
 ```
 
@@ -121,6 +155,61 @@ Suggested Review Prompt for Copilot:
 - Build verified: `npm run build` produces valid artifacts in `dist/`.
 - Type-safety: limited `tsc` scope to `src/` and included `types/**/*.d.ts` so legacy root files don’t block type-checking; PNG module types are resolved.
 - Added SPA fallback `404.html` so GitHub Pages deep links work.
+- Added simple Express server under `server/` with JSON file storage and endpoints:
+  - `GET/POST/PUT/DELETE /projects`
+  - `GET/PUT /site-settings`
+  - `GET/PUT /cms-settings`
+  - Start with `npm run server` (defaults to `http://localhost:5174`).
+
+## Local API Server (Optional)
+
+- Start: `npm run server` (port 5174). Health check at `/health`.
+- Combined dev: `npm run dev:full` to run Vite and API together.
+- Point the app to it by setting `VITE_API_BASE=http://localhost:5174` in `.env.local`.
+
+Storage
+- Persists JSON under `server/data/`.
+- Safe for local development; not intended for production use.
+
+## Reusing the Admin Module in Another Project
+
+- Copy `src/admin/` into your project.
+- Implement the service interfaces defined in `src/admin/services/types.ts`:
+  - `IProjectService`, `ISiteSettingsService`, `ICmsSettingsService`.
+- Provide your implementations via `AdminServicesProvider`.
+
+Minimal example using custom services:
+
+```tsx
+// src/admin/examples/customServicesExample.ts has a full example
+import { AdminServicesProvider } from '@/admin/services/AdminServicesContext';
+import { customAdminServices } from '@/admin/examples/customServicesExample';
+import AdminApp from '@/admin/AdminApp';
+
+export function AdminMount() {
+  return (
+    <AdminServicesProvider services={customAdminServices}>
+      <AdminApp />
+    </AdminServicesProvider>
+  );
+}
+```
+
+Mount under your router:
+
+```tsx
+import { Routes, Route } from 'react-router-dom';
+
+<Routes>
+  <Route path="/admin/*" element={<AdminMount />} />
+  {/* ...other routes */}
+  
+</Routes>
+```
+
+Standalone admin entry (debug separately):
+- Add an `admin.html` like in this repo and a small entry file similar to `src/admin/main-admin.tsx`.
+- Run with `vite --config vite.admin.config.ts`.
 
 ## Deploying to GitHub Pages
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ChatMessage } from '../../types';
+import type { ChatMessage } from '@/types';
 import { XIcon } from './icons/XIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 

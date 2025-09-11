@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Project } from '../types';
+import type { Project } from '@/types';
 import { XIcon } from './icons/XIcon';
 import { ArrowUpRightIcon } from './icons/ArrowUpRightIcon';
 import { GitHubIcon } from './icons/GitHubIcon';

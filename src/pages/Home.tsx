@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Hero } from '../components/Hero';
-import { ProjectsSection } from '../components/ProjectsSection';
-import { Chat } from '../components/Chat';
-import { ProjectPreview } from '../components/ProjectPreview';
-import { ContentPreview } from '../components/ContentPreview';
-import { getProjects } from '../services/projectService';
-import { fetchBio } from '../services/geminiService';
-import { Tabs } from '../components/RepoTabs';
-import type { Project, ChatMessage, TabItem } from '../types';
-import { ChipIcon } from '../components/icons/ChipIcon';
-import { SparklesIcon } from '../components/icons/SparklesIcon';
-import { DocumentIcon } from '../components/icons/DocumentIcon';
-import { MailIcon } from '../components/icons/MailIcon';
-import { ArrowRightIcon } from '../components/icons/ArrowRightIcon';
-import { Footer } from '../components/Footer';
+import { Hero } from '@/components/Hero';
+import { ProjectsSection } from '@/components/ProjectsSection';
+import { Chat } from '@/components/Chat';
+import { ProjectPreview } from '@/components/ProjectPreview';
+import { ContentPreview } from '@/components/ContentPreview';
+import { getProjects } from '@/services/projectService';
+import { getCmsSettings } from '@/services/cmsSettingsService';
+import { SectionsRenderer } from '@/components/SectionsRenderer';
+import { Tabs } from '@/components/RepoTabs';
+import type { Project, ChatMessage, TabItem } from '@/types';
+import { ChipIcon } from '@/components/icons/ChipIcon';
+import { SparklesIcon } from '@/components/icons/SparklesIcon';
+import { DocumentIcon } from '@/components/icons/DocumentIcon';
+import { MailIcon } from '@/components/icons/MailIcon';
+import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon';
 
 const Section: React.FC<{title: string, children: React.ReactNode}> = ({title, children}) => (
   <div className="mb-6 last:mb-0">
@@ -112,7 +112,13 @@ const Home: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectPreview, setProjectPreview] = useState<Project | null>(null);
   const [contentPreview, setContentPreview] = useState<ChatMessage | null>(null);
-  const [bio, setBio] = useState<string>('');
+  const staticBio = "Data Analyst who turns complex data into clear, actionable insights. Skilled in SQL, Python, and Power BI, I build reliable pipelines and dashboards that improve decisions and outcomes.";
+  const [bio] = useState<string>(staticBio);
+  const [heroTitle, setHeroTitle] = useState<string | undefined>(undefined);
+  const [heroSubtitle, setHeroSubtitle] = useState<string | undefined>(undefined);
+  const [heroBg, setHeroBg] = useState<string | undefined>(undefined);
+  const [cmsSkills, setCmsSkills] = useState<string[] | undefined>(undefined);
+  const [cmsSections, setCmsSections] = useState<any[] | undefined>(undefined);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -122,7 +128,13 @@ const Home: React.FC = () => {
       setProjects(fetchedProjects);
     };
 
-    fetchBio().then(setBio).catch(() => setBio(''));
+    getCmsSettings().then(s => {
+      setHeroTitle(s.hero?.title);
+      setHeroSubtitle(s.hero?.subtitle);
+      setHeroBg(s.hero?.backgroundUrl);
+      if (s.skills && s.skills.length) setCmsSkills(s.skills);
+      if (s.sections && s.sections.length) setCmsSections(s.sections);
+    }).catch(() => {});
     fetchProjects();
   }, []);
 
@@ -151,16 +163,22 @@ const Home: React.FC = () => {
     { id: 'contact', label: 'Contact', icon: <MailIcon />, content: <ContactTab /> },
   ];
 
+  if (cmsSkills && cmsSkills.length) {
+    tabData.splice(1, 0, {
+      id: 'custom-skills',
+      label: 'Custom Skills',
+      icon: <ChipIcon />,
+      content: <SkillList items={cmsSkills} />,
+    });
+  }
+
   return (
     <>
+        <Hero bio={bio} title={heroTitle} subtitle={heroSubtitle} backgroundUrl={heroBg} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow flex flex-col">
-            <Hero bio={bio} />
-            
-            <div className="my-8 animate-slide-in-up" style={{ animationDelay: '200ms', opacity: 0 }}>
-                <Tabs tabs={tabData} persistSelection={true} storageKey="portfolio-active-tab"/>
-            </div>
 
-            <section id="chat-interactive" className="relative flex-grow flex flex-col animate-slide-in-up" style={{ animationDelay: '300ms', opacity: 0 }}>
+            {/* Chat section moved above tabs */}
+            <section id="chat-interactive" className="relative flex-grow flex flex-col animate-slide-in-up mb-20 md:mb-28" style={{ animationDelay: '180ms', opacity: 0 }}>
                 <div className="w-full flex items-start gap-8 transition-all duration-500 ease-in-out flex-grow">
                 <div className={`transition-all duration-500 ease-in-out h-full ${showPreview ? 'w-full lg:w-1/2' : 'w-full lg:w-2/3 mx-auto'}`}>
                     <Chat 
@@ -180,8 +198,18 @@ const Home: React.FC = () => {
                     {contentPreview && <ContentPreview message={contentPreview} onClose={handleClosePreview} />}
                 </div>
             </section>
+
+            {cmsSections && cmsSections.length > 0 && (
+              <div className="animate-slide-in-up" style={{ animationDelay: '220ms', opacity: 0 }}>
+                <SectionsRenderer sections={cmsSections as any} />
+              </div>
+            )}
+
+            <div className="my-8 animate-slide-in-up" style={{ animationDelay: '280ms', opacity: 0 }}>
+                <Tabs tabs={tabData} persistSelection={true} storageKey="portfolio-active-tab"/>
+            </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="w-full">
             <ProjectsSection projects={projects.slice(0, 2)} />
             {projects.length > 2 && (
                 <div className="text-center -mt-8 mb-16">
@@ -192,7 +220,7 @@ const Home: React.FC = () => {
                 </div>
             )}
         </div>
-        <Footer />
+        {/* Footer removed here; App shell renders it globally */}
     </>
   );
 };

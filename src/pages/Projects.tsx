@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getProjects } from '../services/projectService';
-import { ProjectsSection } from '../components/ProjectsSection';
-import type { Project } from '../types';
+import { getProjects } from '@/services/projectService';
+import { ProjectsSection } from '@/components/ProjectsSection';
+import type { Project } from '@/types';
 
 const Projects: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -16,11 +16,10 @@ const Projects: React.FC = () => {
     }, []);
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full animate-fade-in">
-           <ProjectsSection projects={projects} />
+        <div className="w-full animate-fade-in">
+            <ProjectsSection projects={projects} />
         </div>
     );
 };
 
 export default Projects;
-

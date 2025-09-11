@@ -93,7 +93,7 @@ const About: React.FC = () => {
     }, []);
 
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 animate-fade-in">
+        <div className="content max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 animate-fade-in">
             <header className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">About Me</h1>
                 <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
@@ -119,4 +119,3 @@ const About: React.FC = () => {
 };
 
 export default About;
-

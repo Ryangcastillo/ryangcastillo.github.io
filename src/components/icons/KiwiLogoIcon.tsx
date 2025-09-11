@@ -1,5 +1,5 @@
 import React from 'react';
-import kiwiLogo from '../../assets/kiwi-logo.png';
+import kiwiLogo from '@/assets/kiwi-logo.png';
 
 // Kiwi logo as an image
 export const KiwiLogoIcon: React.FC<React.ImgHTMLAttributes<HTMLImageElement>> = (props) => (

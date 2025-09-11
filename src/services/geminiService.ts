@@ -1,16 +1,22 @@
-import type { Preview } from '../types';
+import type { Preview } from '@/types';
 import { api } from './api';
+import { getSiteSettings } from './siteSettingsService';
 
 // --- Using OpenRouter instead of Gemini ---
 
 const defaultBio = "Experienced Data and Reporting Analyst specializing in leveraging data to drive business process improvement and automation. Proficient in Python, SQL, and Power BI.";
 
 export const generateBio = (): string => {
-  // Kept for backwards compatibility; returns a default value synchronously
+  // Synchronous default; admin override is only checked in async path
   return defaultBio;
 };
 
 export const fetchBio = async (): Promise<string> => {
+  // Admin override via site settings
+  try {
+    const settings = await getSiteSettings();
+    if (settings.bio && settings.bio.trim()) return settings.bio.trim();
+  } catch { /* ignore */ }
   const apiKey = (import.meta as any).env?.VITE_OPENROUTER_API_KEY as string | undefined;
   if (!apiKey) return defaultBio;
   try {

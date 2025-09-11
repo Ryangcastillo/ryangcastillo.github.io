@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { chatWithRyanAI } from '../services/geminiService';
-import type { ChatMessage } from '../types';
+import { chatWithRyanAI } from '@/services/geminiService';
+import type { ChatMessage } from '@/types';
 import { SearchIcon } from './icons/SearchIcon';
 import { ArrowUpIcon } from './icons/ArrowUpIcon';
 import { UserIcon } from './icons/UserIcon';

@@ -1,0 +1,24 @@
+{
+  "name": "admin-starter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev:admin": "vite --config vite.admin.config.ts",
+    "build:admin": "vite build --config vite.admin.config.ts"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-router-dom": "^5.3.3",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
+
